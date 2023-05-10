@@ -1,8 +1,12 @@
 package com.br.hotel.views;
 
 
+import com.br.hotel.dao.ReservaDao;
+import com.br.hotel.model.Reserva;
+import com.br.hotel.util.FactoryUtil;
 import com.toedter.calendar.JDateChooser;
 
+import javax.persistence.EntityManager;
 import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
@@ -13,6 +17,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ReservasView extends JFrame {
     private JPanel contentPane;
@@ -242,6 +249,15 @@ public class ReservasView extends JFrame {
         btnProximo.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {
+
+                    LocalDate dataEntrada = LocalDate.parse(ReservasView.txtDataE.getDate().toString(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    LocalDate dataSaida = LocalDate.parse(ReservasView.txtDataS.getDate().toString(),
+                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    String formaPagamento = ReservasView.txtFormaPagamento.getSelectedItem().toString();
+
+                    criarReserva(dataEntrada, dataSaida, formaPagamento);
+
                     RegistroHospede registro = new RegistroHospede();
                     registro.setVisible(true);
                 } else {
@@ -272,5 +288,17 @@ public class ReservasView extends JFrame {
         int x = evt.getXOnScreen();
         int y = evt.getYOnScreen();
         this.setLocation(x - this.xMouse, y - this.yMouse);
+    }
+
+    private void criarReserva(LocalDate dataEntrada, LocalDate dataSaida, String pagamento) {
+
+        EntityManager em = FactoryUtil.getEntityManager();
+        ReservaDao reservaDao = new ReservaDao(em, Reserva.class);
+        Reserva reserva = new Reserva(dataEntrada, dataSaida, new BigDecimal(123.05), pagamento);
+
+        em.getTransaction().begin();
+        reservaDao.create(reserva);
+        em.getTransaction().commit();
+        em.close();
     }
 }
