@@ -3,13 +3,15 @@ package com.br.hotel.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "login")
+@Table(name = "usuario")
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String login;
     private String senha;
+
+    public Usuario() {}
 
     public Usuario(String login, String senha) {
         this.login = login;

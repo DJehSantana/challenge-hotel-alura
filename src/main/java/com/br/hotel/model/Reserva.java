@@ -11,7 +11,6 @@ public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private LocalDate dataEntrada;
     private LocalDate dataSaida;
     private BigDecimal valor;
