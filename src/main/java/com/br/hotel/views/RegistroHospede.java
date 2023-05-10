@@ -1,8 +1,15 @@
 package com.br.hotel.views;
 
 
+import com.br.hotel.dao.ClienteDao;
+import com.br.hotel.dao.ReservaDao;
+import com.br.hotel.model.Cliente;
+import com.br.hotel.model.Reserva;
+import com.br.hotel.util.FactoryUtil;
 import com.toedter.calendar.JDateChooser;
+import jdk.jfr.Category;
 
+import javax.persistence.EntityManager;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -231,6 +238,18 @@ public class RegistroHospede extends JFrame {
         btnsalvar.setBounds(723, 560, 122, 35);
         btnsalvar.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+                String nome = txtNome.getText();
+                String sobrenome = txtSobrenome.getText();
+                String dataNascimento = txtDataN.getDateFormatString();
+                String idReserva = txtNreserva.getText();
+                String nacionalidade = txtNacionalidade.getSelectedItem().toString();
+                String telefone = txtTelefone.getText();
+                try {
+                    Long.parseLong(idReserva);
+                }catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(RegistroHospede.this, "Número da matrícula não encontrado");
+                }
+                salvarCliente(nome, sobrenome, dataNascimento, nacionalidade, telefone, Long.parseLong(idReserva));
             }
         });
         btnsalvar.setLayout((LayoutManager)null);
@@ -267,5 +286,19 @@ public class RegistroHospede extends JFrame {
         int x = evt.getXOnScreen();
         int y = evt.getYOnScreen();
         this.setLocation(x - this.xMouse, y - this.yMouse);
+    }
+
+    private void salvarCliente(String nome, String sobrenome, String dataNascimento, String nacionalidade, String telefone, Long idReserva) {
+        EntityManager em = FactoryUtil.getEntityManager();
+        ClienteDao clienteDao = new ClienteDao(em, Cliente.class);
+        ReservaDao reservaDao = new ReservaDao(em, Reserva.class);
+        Cliente cliente = new Cliente(nome, sobrenome, dataNascimento, nacionalidade, telefone);
+
+        em.getTransaction().begin();
+        Reserva reserva = reservaDao.findById(idReserva);
+        reserva.setCliente(cliente);
+        clienteDao.create(cliente);
+        em.getTransaction().commit();
+        em.close();
     }
 }
