@@ -13,4 +13,9 @@ public class ClienteDao extends GenericDao<Cliente, Long> {
         super(em, entityClass);
         this.em = em;
     }
+
+    public boolean login (String login, String password) {
+
+        return false;
+    }
 }
