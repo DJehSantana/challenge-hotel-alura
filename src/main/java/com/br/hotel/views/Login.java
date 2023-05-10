@@ -1,5 +1,10 @@
 package com.br.hotel.views;
 
+import com.br.hotel.dao.UsuarioDao;
+import com.br.hotel.model.Usuario;
+import com.br.hotel.util.FactoryUtil;
+
+import javax.persistence.EntityManager;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -195,16 +200,20 @@ public class Login extends JFrame {
     }
 
     private void Login() {
-        String Usuario = "admin";
-        String Senha = "admin";
-        String senhaa = new String(this.txtSenha.getPassword());
-        if (this.txtUsuario.getText().equals(Usuario) && senhaa.equals(Senha)) {
+        EntityManager em = FactoryUtil.getEntityManager();
+        UsuarioDao usuarioDao = new UsuarioDao(em, Usuario.class);
+        String senha = new String(this.txtSenha.getPassword());
+        String login = this.txtUsuario.getText();
+        boolean autenticado = usuarioDao.validarLogin(login, senha);
+
+        if(autenticado) {
             MenuUsuario menu = new MenuUsuario();
             menu.setVisible(true);
             this.dispose();
         } else {
-            JOptionPane.showMessageDialog(this, "Usuario ou Senha não válidos");
+            JOptionPane.showMessageDialog(this, "Usuário ou senha inválidos");
         }
+
 
     }
 
