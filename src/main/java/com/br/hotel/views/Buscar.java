@@ -176,6 +176,7 @@ public class Buscar extends JFrame {
             JPanel btnbuscar = new JPanel();
             btnbuscar.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
+
                 }
             });
             btnbuscar.setLayout((LayoutManager)null);

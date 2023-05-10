@@ -3,6 +3,7 @@ package com.br.hotel.model;
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "reservas")
@@ -11,8 +12,8 @@ public class Reserva {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private LocalDate dataEntrada;
-    private LocalDate dataSaida;
+    private Date dataEntrada;
+    private Date  dataSaida;
     private BigDecimal valor;
     private String formaPagamento;
 
@@ -21,7 +22,7 @@ public class Reserva {
 
     public Reserva() {}
 
-    public Reserva(LocalDate dataEntrada, LocalDate dataSaida, BigDecimal valor, String formaPagamento) {
+    public Reserva(Date dataEntrada, Date dataSaida, BigDecimal valor, String formaPagamento) {
         this.dataEntrada = dataEntrada;
         this.dataSaida = dataSaida;
         this.valor = valor;
@@ -31,19 +32,19 @@ public class Reserva {
     public Long getId() {
         return id;
     }
-    public LocalDate getDataEntrada() {
+    public Date getDataEntrada() {
         return dataEntrada;
     }
 
-    public void setDataEntrada(LocalDate dataEntrada) {
+    public void setDataEntrada(Date dataEntrada) {
         this.dataEntrada = dataEntrada;
     }
 
-    public LocalDate getDataSaida() {
+    public Date getDataSaida() {
         return dataSaida;
     }
 
-    public void setDataSaida(LocalDate dataSaida) {
+    public void setDataSaida(Date dataSaida) {
         this.dataSaida = dataSaida;
     }
 

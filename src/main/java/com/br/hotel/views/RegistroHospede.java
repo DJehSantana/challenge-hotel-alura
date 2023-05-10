@@ -17,6 +17,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class RegistroHospede extends JFrame {
     private JPanel contentPane;
@@ -240,16 +242,23 @@ public class RegistroHospede extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 String nome = txtNome.getText();
                 String sobrenome = txtSobrenome.getText();
-                String dataNascimento = txtDataN.getDateFormatString();
+                Date dataNascimento = txtDataN.getDate();
                 String idReserva = txtNreserva.getText();
                 String nacionalidade = txtNacionalidade.getSelectedItem().toString();
                 String telefone = txtTelefone.getText();
+
+                String dataFormatada = new SimpleDateFormat("dd/MM/yyyy").format(dataNascimento);
+
                 try {
                     Long.parseLong(idReserva);
-                }catch (NumberFormatException e) {
+                }catch (NumberFormatException error) {
                     JOptionPane.showMessageDialog(RegistroHospede.this, "Número da matrícula não encontrado");
                 }
-                salvarCliente(nome, sobrenome, dataNascimento, nacionalidade, telefone, Long.parseLong(idReserva));
+                salvarCliente(nome, sobrenome, dataFormatada, nacionalidade, telefone, Long.parseLong(idReserva));
+
+                Sucesso sucesso = new Sucesso();
+                sucesso.setVisible(true);
+
             }
         });
         btnsalvar.setLayout((LayoutManager)null);

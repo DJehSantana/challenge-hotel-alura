@@ -6,11 +6,13 @@ import com.br.hotel.dao.UsuarioDao;
 import com.br.hotel.model.Cliente;
 import com.br.hotel.model.Reserva;
 import com.br.hotel.model.Usuario;
+import com.br.hotel.util.CalculaDiarias;
 import com.br.hotel.util.FactoryUtil;
 
 import javax.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 import static java.time.LocalDate.*;
@@ -35,9 +37,10 @@ public class Teste {
         cadastrarCliente("José", "da Silva", "17/06/1991", "argentina", "15987651234");
         cadastrarCliente("Jaqueline", "Mota", "14/05/1996", "brasileira", "1856789432");
 
-        LocalDate dataEntrada = LocalDate.of(2023, 5, 12);
-        LocalDate dataSaida = LocalDate.of(2023, 5, 15);
+        Date dataEntrada = new Date(2023, 5, 12);
+        Date dataSaida = new Date(2023, 5, 15);
         BigDecimal valorDiaria = BigDecimal.valueOf(123.05);
+
 
         cadastrarReserva(dataEntrada, dataSaida, valorDiaria, "dinheiro");
     }
@@ -68,7 +71,7 @@ public class Teste {
         return usuario;
     }
 
-    public static void cadastrarReserva(LocalDate dataEntrada, LocalDate dataSaida, BigDecimal valorDiaria, String formaPagamento) {
+    public static void cadastrarReserva(Date dataEntrada, Date dataSaida, BigDecimal valorDiaria, String formaPagamento) {
         EntityManager em = FactoryUtil.getEntityManager();
         ReservaDao reservaDao = new ReservaDao(em, Reserva.class);
         ClienteDao clienteDao = new ClienteDao(em, Cliente.class);
@@ -76,10 +79,9 @@ public class Teste {
 
         Cliente cliente = clientes.get(1);
 
-        int diaEntrada = dataEntrada.getDayOfMonth();
-        int diaSaida = dataSaida.getDayOfMonth();
-        int diarias = diaSaida - diaEntrada;
-        BigDecimal valorTotal = valorDiaria.multiply(new BigDecimal(diarias));
+        CalculaDiarias calculaDiarias = new CalculaDiarias();
+
+        BigDecimal valorTotal = calculaDiarias.calcularValorTotal(dataEntrada, dataSaida, valorDiaria);
 
         Reserva reserva = new Reserva(dataEntrada, dataSaida, valorTotal, formaPagamento);
         reserva.setCliente(cliente);

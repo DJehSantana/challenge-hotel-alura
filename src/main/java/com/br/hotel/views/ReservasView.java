@@ -3,6 +3,7 @@ package com.br.hotel.views;
 
 import com.br.hotel.dao.ReservaDao;
 import com.br.hotel.model.Reserva;
+import com.br.hotel.util.CalculaDiarias;
 import com.br.hotel.util.FactoryUtil;
 import com.toedter.calendar.JDateChooser;
 
@@ -20,6 +21,7 @@ import java.beans.PropertyChangeListener;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 public class ReservasView extends JFrame {
     private JPanel contentPane;
@@ -250,14 +252,11 @@ public class ReservasView extends JFrame {
             public void mouseClicked(MouseEvent e) {
                 if (ReservasView.txtDataE.getDate() != null && ReservasView.txtDataS.getDate() != null) {
 
-                    LocalDate dataEntrada = LocalDate.parse(ReservasView.txtDataE.getDate().toString(),
-                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-                    LocalDate dataSaida = LocalDate.parse(ReservasView.txtDataS.getDate().toString(),
-                            DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                    Date dataEntrada = ReservasView.txtDataE.getDate();
+                    Date dataSaida = ReservasView.txtDataS.getDate();
                     String formaPagamento = ReservasView.txtFormaPagamento.getSelectedItem().toString();
 
                     criarReserva(dataEntrada, dataSaida, formaPagamento);
-
                     RegistroHospede registro = new RegistroHospede();
                     registro.setVisible(true);
                 } else {
@@ -290,11 +289,17 @@ public class ReservasView extends JFrame {
         this.setLocation(x - this.xMouse, y - this.yMouse);
     }
 
-    private void criarReserva(LocalDate dataEntrada, LocalDate dataSaida, String pagamento) {
+    private void criarReserva(Date dataEntrada, Date dataSaida, String pagamento) {
 
         EntityManager em = FactoryUtil.getEntityManager();
         ReservaDao reservaDao = new ReservaDao(em, Reserva.class);
-        Reserva reserva = new Reserva(dataEntrada, dataSaida, new BigDecimal(123.05), pagamento);
+        BigDecimal valorDiaria = BigDecimal.valueOf(123.05);
+
+        CalculaDiarias calculaDiarias = new CalculaDiarias();
+
+        BigDecimal valorTotal = calculaDiarias.calcularValorTotal(dataEntrada, dataSaida, valorDiaria);
+
+        Reserva reserva = new Reserva(dataEntrada, dataSaida, valorTotal, pagamento);
 
         em.getTransaction().begin();
         reservaDao.create(reserva);
